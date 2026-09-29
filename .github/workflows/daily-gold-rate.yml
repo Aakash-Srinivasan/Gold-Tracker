@@ -8,6 +8,12 @@ on:
 permissions:
   contents: write           # needed to save price_history.json
 
+# Prevent a manual run from overlapping the scheduled one (which pushes to
+# price_history.json — an overlap could otherwise race on the git push).
+concurrency:
+  group: daily-gold-rate
+  cancel-in-progress: false
+
 jobs:
   notify:
     runs-on: ubuntu-latest

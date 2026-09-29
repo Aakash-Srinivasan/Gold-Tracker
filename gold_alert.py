@@ -49,6 +49,16 @@ SOURCES = [
             r"22\s*(?:K|Carat)[^₹]{0,120}₹\s*([\d,]+)",
         ],
     },
+    {
+        "name": "Candere",
+        "url": "https://www.candere.com/gold-rate-today/chennai",
+        "patterns": [
+            # e.g. "22K +0% ₹13,665 1g of 24K gold in Indian Rupee" — the per-gram
+            # 22K price sits right after the "22K" + change-percent marker.
+            r"22K\s*[+\-]?\d*(?:\.\d+)?%\s*₹\s*([\d,]+)",
+            r"22\s*(?:K|Carat)[^₹]{0,80}₹\s*([\d,]+)",
+        ],
+    },
 ]
 
 # Sanity range for price per gram (INR) so we never report garbage numbers.

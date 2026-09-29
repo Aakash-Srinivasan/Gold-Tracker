@@ -5,6 +5,12 @@ on:
     - cron: "*/15 * * * *"   # checks for /today, /history, /graph every 15 minutes
   workflow_dispatch:
 
+# Prevent overlapping polls from ever both trying to mark the same Telegram
+# updates as read at once.
+concurrency:
+  group: bot-commands
+  cancel-in-progress: false
+
 jobs:
   reply:
     runs-on: ubuntu-latest

@@ -95,7 +95,18 @@ def main():
             send_message(f"⚠️ Something went wrong: {e}", chat_id, with_button=False)
 
     # Tell Telegram these updates are handled so they aren't answered twice.
-    requests.get(f"{API}/getUpdates", params={"offset": updates[-1]["update_id"] + 1, "timeout": 0}, timeout=30)
+    # If this specific call fails, Telegram will redeliver the same updates
+    # next poll and we'd answer them again — so retry once before giving up,
+    # and at least log a warning (rather than silently swallowing it) if it
+    # still fails, since the job itself shouldn't fail just because of this.
+    offset = updates[-1]["update_id"] + 1
+    for attempt in range(2):
+        try:
+            requests.get(f"{API}/getUpdates", params={"offset": offset, "timeout": 0}, timeout=30).raise_for_status()
+            break
+        except Exception as e:  # noqa: BLE001
+            if attempt == 1:
+                print(f"Warning: could not mark updates as read (offset={offset}): {e}")
 
 
 if __name__ == "__main__":
