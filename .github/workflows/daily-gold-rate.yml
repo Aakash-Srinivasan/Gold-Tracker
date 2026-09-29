@@ -1,0 +1,38 @@
+name: Daily Chennai Gold Rate
+
+on:
+  schedule:
+    - cron: "30 4 * * *"   # 04:30 UTC = 10:00 AM IST, every day
+  workflow_dispatch:        # lets you run it manually from the Actions tab
+
+permissions:
+  contents: write           # needed to save price_history.json
+
+jobs:
+  notify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - run: pip install -r requirements.txt
+
+      - name: Fetch rate and send Telegram message
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+          DASHBOARD_URL: ${{ vars.DASHBOARD_URL }}
+        run: python gold_alert.py
+
+      - name: Save price history (for daily up/down comparison)
+        if: success()
+        run: |
+          git config user.name "gold-bot"
+          git config user.email "gold-bot@users.noreply.github.com"
+          git add price_history.json
+          git diff --staged --quiet || git commit -m "Gold rate $(date -u +%F)"
+          git push
