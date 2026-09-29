@@ -1,4 +1,4 @@
-# Chennai 22K Gold Rate → Telegram (daily) + history & graph
+# 🪎 Chennai 22K Gold Rate → Telegram (daily) + history & graph
 
 What you get:
 - **Every day at 10:00 AM IST** a Telegram message with the 22K rate per gram and per
