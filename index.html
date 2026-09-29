@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Chennai 22K gold rate history</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🪙</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Marcellus&family=Hind+Madurai:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #F6EFF1;
+    --surface: #FFFFFF;
+    --ink: #2A1219;
+    --muted: #7A5A64;
+    --silk: #5B1A2E;
+    --zari: #B8892E;
+    --zari-soft: rgba(184, 137, 46, .16);
+    --line: #E6D7DC;
+    --up: #1F7A4A;
+    --down: #B3261E;
+    --serif: "Marcellus", "Palatino Linotype", Palatino, Georgia, serif;
+    --sans: "Hind Madurai", "Segoe UI", system-ui, -apple-system, sans-serif;
+    box-sizing: border-box;
+    padding-top: env(safe-area-inset-top, 0px);
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #1C0A11; --surface: #28101A; --ink: #F3E6EA; --muted: #BFA3AC;
+      --silk: #E7B7C6; --zari: #D9B25E; --zari-soft: rgba(217, 178, 94, .18);
+      --line: #3E1E2A; --up: #5FCB8E; --down: #F08A80;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #1C0A11; --surface: #28101A; --ink: #F3E6EA; --muted: #BFA3AC;
+    --silk: #E7B7C6; --zari: #D9B25E; --zari-soft: rgba(217, 178, 94, .18);
+    --line: #3E1E2A; --up: #5FCB8E; --down: #F08A80;
+  }
+  *, *::before, *::after { box-sizing: inherit; }
+  html { scroll-padding-top: env(safe-area-inset-top, 0px); }
+  body {
+    margin: 0; background: var(--bg); color: var(--ink);
+    font: 400 17px/1.55 var(--sans);
+  }
+
+  /* The one bold element: a Kanchipuram-style zari border with temple triangles */
+  .zari {
+    height: 34px;
+    background:
+      conic-gradient(from -45deg at 50% 100%, var(--zari) 0 90deg, transparent 0) 0 0 / 22px 11px repeat-x,
+      linear-gradient(var(--zari), var(--zari)) 0 18px / 100% 3px no-repeat,
+      linear-gradient(var(--zari), var(--zari)) 0 25px / 100% 1px no-repeat,
+      #5B1A2E;
+    background-position: 0 5px, 0 0, 0 0, 0 0;
+  }
+
+  main { max-width: 860px; margin: 0 auto; padding: 28px 20px 56px; }
+  h1 { font: 400 clamp(1.5rem, 4vw, 2rem)/1.2 var(--serif); margin: 0; color: var(--silk); }
+  .updated { color: var(--muted); margin: 4px 0 0; font-size: .95rem; }
+
+  .today { margin: 28px 0 8px; }
+  .price { font: 400 clamp(3rem, 12vw, 5.5rem)/1 var(--serif); color: var(--ink); letter-spacing: -.01em; }
+  .price small { font: 500 1.05rem var(--sans); color: var(--muted); margin-left: 8px; letter-spacing: 0; }
+  .sub { margin-top: 10px; display: flex; flex-wrap: wrap; gap: 6px 22px; color: var(--muted); }
+  .sub b { color: var(--ink); font-weight: 600; }
+  .up, .stats b.up { color: var(--up); } .down, .stats b.down { color: var(--down); }
+
+  .controls { display: flex; flex-wrap: wrap; gap: 12px; justify-content: space-between; margin: 32px 0 14px; }
+  .seg { display: inline-flex; border: 1px solid var(--line); border-radius: 999px; padding: 3px; background: var(--surface); }
+  .seg button {
+    font: 500 .92rem var(--sans); color: var(--muted); background: none; border: 0;
+    padding: 6px 13px; border-radius: 999px; cursor: pointer; white-space: nowrap;
+  }
+  .seg button[aria-pressed="true"] { background: var(--silk); color: var(--bg); }
+  .seg button:focus-visible { outline: 2px solid var(--zari); outline-offset: 2px; }
+
+  .chart-box { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 16px 10px 8px; }
+  .chart-wrap { position: relative; height: 320px; }
+  .stats { display: flex; flex-wrap: wrap; gap: 6px 26px; padding: 12px 8px 4px; color: var(--muted); font-size: .95rem; }
+  .stats b { color: var(--ink); font-weight: 600; }
+
+  h2 { font: 400 1.35rem var(--serif); color: var(--silk); margin: 40px 0 10px; }
+  .table-wrap { overflow-x: auto; border: 1px solid var(--line); border-radius: 14px; background: var(--surface); max-height: 520px; overflow-y: auto; }
+  table { width: 100%; border-collapse: collapse; font-variant-numeric: tabular-nums; }
+  th, td { padding: 10px 16px; text-align: right; white-space: nowrap; }
+  th:first-child, td:first-child { text-align: left; }
+  thead th { position: sticky; top: 0; background: var(--surface); color: var(--muted); font-weight: 500; font-size: .9rem; border-bottom: 1px solid var(--line); }
+  tbody tr + tr td { border-top: 1px solid var(--line); }
+
+  .notice { margin-top: 28px; padding: 18px 20px; border-left: 3px solid var(--zari); background: var(--zari-soft); border-radius: 0 10px 10px 0; }
+  [hidden] { display: none !important; }
+  @media (max-width: 520px) {
+    .chart-wrap { height: 260px; } th, td { padding: 9px 12px; }
+    .price small { display: block; margin: 8px 0 0; }
+    .seg button { padding: 6px 9px; font-size: .86rem; }
+  }
+</style>
+</head>
+<body>
+<div class="zari" role="presentation"></div>
+<main>
+  <h1>Chennai 22K gold rate</h1>
+  <p class="updated" id="updated">Loading rates…</p>
+
+  <div id="content" hidden>
+    <section class="today" aria-label="Latest rate">
+      <div class="price"><span id="price"></span><small id="unit-label">per gram</small></div>
+      <div class="sub">
+        <span id="change"></span>
+        <span id="other-unit"></span>
+      </div>
+    </section>
+
+    <div class="controls">
+      <div class="seg" role="group" aria-label="Time range" id="ranges">
+        <button data-days="7">7 days</button>
+        <button data-days="30" aria-pressed="true">30 days</button>
+        <button data-days="90">90 days</button>
+        <button data-days="365">1 year</button>
+        <button data-days="0">All</button>
+      </div>
+      <div class="seg" role="group" aria-label="Unit" id="units">
+        <button data-unit="1" aria-pressed="true">Per gram</button>
+        <button data-unit="8">Per sovereign</button>
+      </div>
+    </div>
+
+    <div class="chart-box">
+      <div class="chart-wrap"><canvas id="chart" aria-label="Gold price line chart"></canvas></div>
+      <div class="stats" id="stats"></div>
+    </div>
+
+    <h2>Daily rates</h2>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Date</th><th id="rate-head">Rate per gram</th><th>Change</th></tr></thead>
+        <tbody id="rows"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="notice" id="notice" hidden></div>
+</main>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<script>
+(() => {
+  const inr = n => "₹" + Math.round(n).toLocaleString("en-IN");
+  const fmtDate = (iso, withYear) => new Date(iso + "T00:00:00").toLocaleDateString("en-IN",
+    withYear ? { day: "numeric", month: "short", year: "numeric" } : { day: "numeric", month: "short" });
+  const css = v => getComputedStyle(document.documentElement).getPropertyValue(v).trim();
+
+  let all = [];          // [{date, price}] oldest first
+  let days = 30, unit = 1, chart;
+
+  function showNotice(html) {
+    const n = document.getElementById("notice");
+    n.innerHTML = html; n.hidden = false;
+    document.getElementById("updated").textContent = "";
+  }
+
+  function changeText(cur, prev, prevLabel) {
+    if (prev == null) return "";
+    const d = (cur - prev) * unit;
+    if (d > 0) return `<span class="up">▲ ${inr(d)}</span> since ${prevLabel}`;
+    if (d < 0) return `<span class="down">▼ ${inr(-d)}</span> since ${prevLabel}`;
+    return `No change since ${prevLabel}`;
+  }
+
+  function render() {
+    const last = all[all.length - 1], prev = all[all.length - 2];
+    document.getElementById("price").textContent = inr(last.price * unit);
+    document.getElementById("unit-label").textContent = unit === 1 ? "per gram" : "per sovereign (8 g)";
+    document.getElementById("change").innerHTML = prev ? changeText(last.price, prev.price, fmtDate(prev.date)) : "";
+    document.getElementById("other-unit").innerHTML = unit === 1
+      ? `Sovereign (8 g) <b>${inr(last.price * 8)}</b>`
+      : `Per gram <b>${inr(last.price)}</b>`;
+
+    const slice = days ? all.slice(-days) : all;
+    const values = slice.map(r => r.price * unit);
+    const hi = Math.max(...values), lo = Math.min(...values);
+    const avg = values.reduce((a, b) => a + b, 0) / values.length;
+    const first = values[0], lastV = values[values.length - 1];
+    const pct = first ? ((lastV - first) / first * 100) : 0;
+    document.getElementById("stats").innerHTML =
+      `<span>High <b>${inr(hi)}</b></span><span>Low <b>${inr(lo)}</b></span>` +
+      `<span>Average <b>${inr(avg)}</b></span>` +
+      `<span>Over this period <b class="${pct > 0 ? "up" : pct < 0 ? "down" : ""}">${pct > 0 ? "+" : ""}${pct.toFixed(2)}%</b></span>`;
+
+    const labels = slice.map(r => fmtDate(r.date, slice.length > 180));
+    const silk = css("--silk"), zari = css("--zari"), muted = css("--muted"), line = css("--line");
+    const data = {
+      labels,
+      datasets: [{
+        data: values, borderColor: silk, borderWidth: 2.2, tension: .25,
+        pointRadius: slice.length > 60 ? 0 : 3, pointHoverRadius: 5, pointBackgroundColor: silk,
+        fill: true,
+        backgroundColor: ctx => {
+          const { chartArea, ctx: c } = ctx.chart;
+          if (!chartArea) return "transparent";
+          const g = c.createLinearGradient(0, chartArea.top, 0, chartArea.bottom);
+          g.addColorStop(0, zari + "55"); g.addColorStop(1, zari + "00");
+          return g;
+        },
+      }],
+    };
+    if (typeof Chart === "undefined") { document.querySelector(".chart-wrap").hidden = true; return; }
+    if (chart) { chart.data = data; chart.update(); return; }
+    chart = new Chart(document.getElementById("chart"), {
+      type: "line", data,
+      options: {
+        responsive: true, maintainAspectRatio: false,
+        interaction: { mode: "index", intersect: false },
+        plugins: {
+          legend: { display: false },
+          tooltip: { callbacks: { label: c => " " + inr(c.parsed.y) } },
+        },
+        scales: {
+          x: { grid: { display: false }, ticks: { color: muted, maxTicksLimit: 8, maxRotation: 0 } },
+          y: { grid: { color: line }, border: { display: false }, ticks: { color: muted, callback: v => inr(v) } },
+        },
+      },
+    });
+  }
+
+  function renderTable() {
+    document.getElementById("rate-head").textContent = unit === 1 ? "Rate per gram" : "Rate per sovereign";
+    const rows = [];
+    for (let i = all.length - 1; i >= 0; i--) {
+      const r = all[i], p = all[i - 1];
+      let ch = "–";
+      if (p) {
+        const d = (r.price - p.price) * unit;
+        ch = d > 0 ? `<span class="up">▲ ${inr(d)}</span>` : d < 0 ? `<span class="down">▼ ${inr(-d)}</span>` : "–";
+      }
+      rows.push(`<tr><td>${fmtDate(r.date, true)}</td><td>${inr(r.price * unit)}</td><td>${ch}</td></tr>`);
+    }
+    document.getElementById("rows").innerHTML = rows.join("");
+  }
+
+  function wire(groupId, attr, set) {
+    document.getElementById(groupId).addEventListener("click", e => {
+      const b = e.target.closest("button"); if (!b) return;
+      document.querySelectorAll(`#${groupId} button`).forEach(x => x.setAttribute("aria-pressed", x === b));
+      set(Number(b.dataset[attr]));
+      render(); renderTable();
+    });
+  }
+  document.querySelectorAll(".seg button:not([aria-pressed])").forEach(b => b.setAttribute("aria-pressed", "false"));
+  wire("ranges", "days", v => days = v);
+  wire("units", "unit", v => unit = v);
+
+  fetch("price_history.json?t=" + Date.now())
+    .then(r => { if (!r.ok) throw new Error(r.status); return r.json(); })
+    .then(json => {
+      all = Object.entries(json).map(([date, price]) => ({ date, price: Number(price) }))
+        .filter(r => r.price > 0).sort((a, b) => a.date.localeCompare(b.date));
+      if (!all.length) {
+        showNotice("No rates saved yet. The history fills in after the first daily run.");
+        return;
+      }
+      document.getElementById("updated").textContent =
+        `Last updated ${fmtDate(all[all.length - 1].date, true)}, ${all.length} day${all.length > 1 ? "s" : ""} recorded`;
+      document.getElementById("content").hidden = false;
+      render();
+      renderTable();
+    })
+    .catch(() => showNotice(
+      "Couldn't load <code>price_history.json</code>. It is created by the first daily run. " +
+      "If you opened this file directly from your computer, open it through your GitHub Pages link instead."));
+})();
+</script>
+</body>
+</html>
