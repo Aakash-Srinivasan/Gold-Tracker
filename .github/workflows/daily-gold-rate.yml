@@ -1,9 +1,12 @@
 name: Daily Chennai Gold Rate
 
 on:
-  schedule:
-    - cron: "30 4 * * *"   # 04:30 UTC = 10:00 AM IST, every day
-  workflow_dispatch:        # lets you run it manually from the Actions tab
+  # No `schedule:` trigger on purpose — GitHub's own cron scheduler was
+  # running this 6+ hours late on back-to-back days (confirmed via the
+  # Actions run history). Timing is now driven externally: an outside cron
+  # service (e.g. cron-job.org) calls the GitHub API to fire this
+  # workflow_dispatch event at the exact intended time (10:00 AM IST).
+  workflow_dispatch:
 
 permissions:
   contents: write           # needed to save price_history.json
